@@ -8,3 +8,11 @@ if(_current_turn == 0 && !dead)
 	}
 	else{current_scale = 1;}
 }
+
+//Test move
+var _tile = random_tile(true,true);
+if(_tile != noone)
+{
+	_tile.status = TILESTATUS.POISON;
+	_tile.status_duration = TILESTATUS.POISON;
+}

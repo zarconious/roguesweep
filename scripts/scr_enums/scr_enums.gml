@@ -23,12 +23,19 @@ function enums(){
     A1_ENEMY2,
 	}
 	
-	
-	
 	enum TILES {
     EMPTY,
 	ENEMY,
 	ITEM,
+	}
+	
+	enum TILESTATUS {
+    NORMAL,
+	ICE,
+	HIDDEN,
+	POISON,
+	BURN,
+	MULTI
 	}
 }
 

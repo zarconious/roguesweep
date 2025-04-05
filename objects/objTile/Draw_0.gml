@@ -9,6 +9,9 @@ if(_open && _tile == TILES.ENEMY)
  _color = c_red;
 if(_open && _tile == TILES.ITEM)
  _color = c_lime;
+ 
+if(get_tile_status(row,col) == TILESTATUS.POISON)
+ _color = c_green;
 draw_sprite_ext(sprite_index,image_index,x,y,1,1,0,_color,1);
 draw_set_valign(fa_middle);
 draw_set_halign(fa_center);

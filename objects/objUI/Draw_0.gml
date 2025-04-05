@@ -10,6 +10,11 @@ draw_sprite(sprUI, 1, 128, room_height - 128*2);
 draw_sprite(sprUI, 2, 128, room_height - 128*3);
 draw_sprite(sprUI, 3, 128, room_height - 128*4);
 
+for(var i = 0; i<objRun.max_moves; i++)
+{
+	draw_circle(room_width/2 - 128 + 64*i, room_height - 128, 24, 0);
+}
+
 draw_set_color(c_orange);
 draw_text(200, room_height - 128*4, string(coins));
 draw_set_color(c_fuchsia);

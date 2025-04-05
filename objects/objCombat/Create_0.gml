@@ -8,16 +8,17 @@ player_turn = false;
 //enemy_list_tag = [ENEMIES.A1_ENEMY1,ENEMIES.A1_ENEMY1,ENEMIES.A1_ENEMY2];
 found_list = [];
 used_list = [];
+mine_list = [];
 
 enemy_list_tag = [];
 switch(objUI.round_number)
 {
 	case 1: 	enemy_list_tag = [ENEMIES.A1_ENEMY1,ENEMIES.A1_ENEMY1]; 
-				mine_list = [MINES.DMG_Mine,MINES.DMG_Mine]; break;
+				break;
 	case 2: 	enemy_list_tag = [ENEMIES.A1_ENEMY2]; 
-				mine_list = [MINES.DMG_Mine_Strong]; break;
+				break;
 	case 3: 	enemy_list_tag = [ENEMIES.A1_ENEMY2, ENEMIES.A1_ENEMY1];
-				mine_list = [MINES.DMG_Mine,MINES.DMG_Mine_Strong];break;
+				break;
 	default: 	enemy_list_tag = [ENEMIES.A1_ENEMY1]; break;
 }
 

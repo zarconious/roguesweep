@@ -6,6 +6,7 @@ function create_new_board(width, height){
 	with(objCombat) {
 		found_list = [];	
 		used_list = [];	
+		mine_list = [];
 	}
 
 	// CREATE CLICKABLE TILES
@@ -25,6 +26,8 @@ function create_new_board(width, height){
 				mines: 0,
 				open: false,
 				has_coin: false,
+				status: TILESTATUS.NORMAL,
+				status_duration: 0,
 				object: noone
 			}
 			
@@ -77,6 +80,9 @@ function add_item(item,type, _closed = false, _empty = false){
 
 		update_mine_count();
 		show_debug_message("Added item " + string(all_items[item.tag]));
+		
+		if(type == TILES.ENEMY)
+		add_to_mine_list(item);
 		
 		return _tile;
 	}
@@ -256,6 +262,19 @@ function open_adjacent_tiles(row,col){
 	}
 }
 
+function add_to_mine_list(mine){
+	with(objCombat)
+	{
+		var _mine_list_length = array_length(mine_list);
+		array_push(mine_list,
+		{
+			index: _mine_list_length,
+			tag: mine.tag
+		});
+	}
+	update_lists();
+}
+
 function find_item(index){
 	with(objCombat)
 	{
@@ -318,10 +337,28 @@ function add_to_bag(item){
 }
 
 function update_lists(){
+	//TODO: Make generics lists so iterating is less used
 	if(!instance_exists(objCombat)) return false;
 	with(objItemUI) instance_destroy();
 	update_bag();
 	update_found();
+	update_mines();
+}
+
+function update_mines(){
+	var _mines = objCombat.mine_list;
+	var _mines_count = array_length(_mines);
+	
+	for(var i = 0; i < _mines_count; i++)
+	{
+		var _tag = _mines[i].tag;
+		var _mine = instance_create_depth(room_width - 432 + (i mod 5)*64, 265 + floor(i div 5)*64,0,objItemUI,{
+			tag: _tag,
+			image_index: _tag,
+			sprite_index: sprMines,
+			description: all_mines[_tag].description,
+		})
+	}
 }
 
 function update_bag(){
@@ -343,6 +380,7 @@ function update_bag(){
 }
 
 function update_found(){
+	// TODO: Create a list object that takes objects and draws them
 	var _items = objRun.move_bag;
 	var _item_count = array_length(_items);
 	var _found_count = 0;
@@ -351,7 +389,7 @@ function update_found(){
 		if(is_found(_items[i].index))
 		{
 			var _tag = _items[i].tag;
-			var _item = instance_create_depth(room_width - 432 + (_found_count mod 5)*64, 400 + floor(_found_count div 5)*64,0,objItemUI,{
+			var _item = instance_create_depth(room_width /2 - 128 + (_found_count mod 5)*64, room_height - 128,0,objItemUI,{
 				index: _items[i].index,
 				tag: _tag,
 				image_index: _tag,
@@ -375,6 +413,10 @@ function get_tile_type(row,col){
 
 function get_tile_tag(row,col){
 	return objBoard.board[row,col].tag;	
+}
+
+function get_tile_status(row,col){
+	return objBoard.board[row,col].status;	
 }
 
 function get_string_pos(row, col){
