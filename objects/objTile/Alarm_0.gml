@@ -1,0 +1,1 @@
+open_adjacent_tiles(row,col);
