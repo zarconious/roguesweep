@@ -1,4 +1,10 @@
 
-if(!found) image_alpha = 0.1; else image_alpha = 1;
+if(!found) image_alpha = 0.5; else image_alpha = 1;
 event_inherited();
-if(used) draw_sprite_ext(sprCheckmark,0,x,y,0.05,0.05,0,c_white,0.8);
+if(used) {
+	if(sprite_index == sprMines)
+	draw_sprite_ext(sprCross,0,x,y,0.5,0.5,0,c_white,0.8);
+	else
+	draw_sprite_ext(sprCheckmark,0,x,y,0.05,0.05,0,c_white,0.8);
+	
+}

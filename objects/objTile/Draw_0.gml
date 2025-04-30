@@ -35,7 +35,7 @@ if(debug)
 	}
 }
 
-if(_open)
+if(_open && !position_meeting(x,y,objItem))
 {
 	//TODO: Optimize this
 	if(get_tile_type(row,col) != TILES.ENEMY)

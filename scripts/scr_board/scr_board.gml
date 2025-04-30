@@ -1,5 +1,9 @@
 function create_new_board(width, height){
 	
+	var _size = objRun.board_size;
+	board_width = _size;
+	board_height = _size;
+
 	with(objTile) instance_destroy();
 	with(objMine) instance_destroy();
 	with(objItem) instance_destroy();
@@ -7,6 +11,7 @@ function create_new_board(width, height){
 		found_list = [];	
 		used_list = [];	
 		mine_list = [];
+		mine_used_list = [];
 	}
 
 	// CREATE CLICKABLE TILES
@@ -111,11 +116,11 @@ function get_tiles(_closed = false, _empty = false){
 	return _tiles;
 }
 
+//TODO: Replace found list with this
 function get_board_items(){
 
 
 }
-
 function get_board_mines(){
 
 
@@ -191,6 +196,9 @@ function is_open(row,col){
 }
 
 function open_tile(row,col, clicked = false){
+		
+		objBoard.alarm[0] = 5;
+		
 		var _tile = objBoard.board[row,col];
 	
 		if(!is_open(row,col))
@@ -205,6 +213,7 @@ function open_tile(row,col, clicked = false){
 			if(_tile.tile == TILES.ENEMY) 
 			{
 					instance_create_depth(_tile_obj.x,_tile_obj.y,-10,objMine, {
+						index: _tile.index,
 						tag: _tile.tag,
 						image_index: _tile.tag,
 						description: all_mines[_tile.tag].description
@@ -296,6 +305,14 @@ function use_item(index){
 	}
 }
 
+function use_mine(index){
+	with(objCombat)
+	{
+		array_push(mine_used_list,index);
+		update_lists();
+	}
+}
+
 function is_found(index){
 	if(!instance_exists(objCombat)) return false;
 	var _items = objCombat.found_list;
@@ -322,6 +339,19 @@ function is_used(index){
 	return false;
 }
 
+function is_mine_used(index){
+	if(!instance_exists(objCombat)) return false;
+	var _items = objCombat.mine_used_list;
+	var _item_count = array_length(_items);
+	for(var i = 0; i < _item_count; i++)
+	{
+		if(_items[i] == index) {
+			return true
+		}
+	}	
+	return false;
+}
+
 
 function add_to_bag(item){
 	with(objRun)
@@ -333,6 +363,7 @@ function add_to_bag(item){
 			tag: item
 		});
 		//Add more stuff if needed (item upgrades...)
+		update_lists();
 	}
 }
 
@@ -348,34 +379,41 @@ function update_lists(){
 function update_mines(){
 	var _mines = objCombat.mine_list;
 	var _mines_count = array_length(_mines);
+	objCombat.mines_number = _mines_count;
 	
 	for(var i = 0; i < _mines_count; i++)
 	{
 		var _tag = _mines[i].tag;
-		var _mine = instance_create_depth(room_width - 432 + (i mod 5)*64, 265 + floor(i div 5)*64,0,objItemUI,{
+		var _mine = instance_create_depth(objRun.minesArea.x + (i mod 5)*(objRun.minesArea.width/5) + 32, objRun.minesArea.y + floor(i div 5)*64 + 96,0,objItemUI,{
+			index: _mines[i].index,
 			tag: _tag,
 			image_index: _tag,
 			sprite_index: sprMines,
 			description: all_mines[_tag].description,
 		})
+		_mine.found = true;
+		_mine.used = is_mine_used(_mines[i].index);
 	}
 }
 
 function update_bag(){
 	var _items = objRun.move_bag;
 	var _item_count = array_length(_items);
-	
-	for(var i = 0; i < _item_count; i++)
+	if(objRun.bagArea != noone)
 	{
-		var _tag = _items[i].tag;
-		var _item = instance_create_depth(room_width - 432 + (i mod 5)*64, 464 + floor(i div 5)*64,0,objItemUI,{
-			index: _items[i].index,
-			tag: _tag,
-			image_index: _tag,
-			description: all_items[_tag].description,
-		})
-		_item.found = is_found(_items[i].index);
-		_item.used = is_used(_items[i].index);
+		
+		for(var i = 0; i < _item_count; i++)
+		{
+			var _tag = _items[i].tag;
+			var _item = instance_create_depth(objRun.bagArea.x + (i mod 5)*(objRun.bagArea.width/5) + 32, objRun.bagArea.y + floor(i div 5)*64 + 32,0,objItemUI,{
+				index: _items[i].index,
+				tag: _tag,
+				image_index: _tag,
+				description: all_items[_tag].description,
+			})
+			_item.found = is_found(_items[i].index);
+			_item.used = is_used(_items[i].index);
+		}
 	}
 }
 
@@ -389,7 +427,8 @@ function update_found(){
 		if(is_found(_items[i].index))
 		{
 			var _tag = _items[i].tag;
-			var _item = instance_create_depth(room_width /2 - 128 + (_found_count mod 5)*64, room_height - 128,0,objItemUI,{
+			
+			var _item = instance_create_depth(objRun.movesArea.x + 64*(_found_count) + 32, objRun.movesArea.y + 32,0,objItemUI,{
 				index: _items[i].index,
 				tag: _tag,
 				image_index: _tag,

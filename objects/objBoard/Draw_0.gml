@@ -36,7 +36,7 @@
 //	}
 //}
 
-
+//draw_sprite(sprCross,0,x,y);
 draw_set_halign(fa_left);
 
 
@@ -49,10 +49,4 @@ if(debug)
 	draw_text(room_width - 448,32, "Found: " + string(array_length(objCombat.found_list)));
 	draw_text(room_width - 448,64, "Used: " + string(array_length(objCombat.used_list)));
 }
-draw_set_color(c_white);
-var _mine_count = array_length(draw_mines);
-draw_text(room_width - 448,128, "Mines in board: x" + string(_mine_count));
-for(var i = 0; i < _mine_count; i++)
-{
-	draw_sprite(sprMines, draw_mines[i], room_width - 432 + (i mod 5)*64, 192 + floor(i div 5)*32);
-}
+

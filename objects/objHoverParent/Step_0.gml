@@ -1,4 +1,4 @@
-show = position_meeting(mouse_x, mouse_y, id);
+show = position_meeting(mouse_x, mouse_y, id) && image_alpha > 0;
 depth = show ? -100 : -10;
 
 if(show)

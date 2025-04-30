@@ -1,5 +1,5 @@
 var _size = irandom_range(4,12);
-_size = objRun.max_moves*2;
+_size = objRun.board_size;
 board_width = _size;
 board_height = _size;
 item_list = [];
@@ -15,5 +15,8 @@ max_coins = 5;
 board = [];
 closedTiles = [];
 openedTiles = [];
+
+is_opening = false;
+free_move = false;
 
 create_new_board(board_width,board_height);

@@ -4,4 +4,4 @@ event_inherited();
 found = false;
 used = false;
 
-current_scale = 0;
+current_scale = 1;
