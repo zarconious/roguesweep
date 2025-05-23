@@ -6,40 +6,13 @@ description = "SHOP";
 
 shop_inventory = [];
 
-array_push(shop_inventory,
-{
-	tag: ITEMS.DMG_Basic,
-	cost: 2
-});
-array_push(shop_inventory,
-{
-	tag: ITEMS.DMG_Bow,
-	cost: 4
-});
-array_push(shop_inventory,
-{
-	tag: ITEMS.DMG_Strong,
-	cost: 3
-});
-array_push(shop_inventory,
-{
-	tag: ITEMS.MSC_Gem,
-	cost: 10
-});
-array_push(shop_inventory,
-{
-	tag: ITEMS.MSC_Reset,
-	cost: 3
-});
-array_push(shop_inventory,
-{
-	tag: ITEMS.PUP_Health,
-	cost: 6
-});
-array_push(shop_inventory,
-{
-	tag: ITEMS.PUP_Shield,
-	cost: 4
-});
+for(var i = 0; i<10; i++){
+	array_push(shop_inventory,
+	{
+		tag: i,
+		cost: all_items[i].cost
+	});
+}
+
 
 alarm[0] = step_interval;

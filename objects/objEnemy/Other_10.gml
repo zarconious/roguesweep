@@ -2,11 +2,19 @@ curr_turn--;
 
 if(curr_turn == 0 && !dead)
 {
-	if(!add_item({tag: mine, index: array_length(objCombat.mine_list)}, TILES.ENEMY, true, true))
+	repeat(count)
 	{
-		miss = 30;
+		if(!add_item({tag: mine, index: array_length(objCombat.mine_list)}, TILES.ENEMY, 1, 1))
+		{
+			if(!add_to_hold_list({tag: mine, index: array_length(objCombat.mine_list)}))
+			miss = 30;
+			else{current_scale = 1;}
+		}
+		else{current_scale = 1;}
 	}
-	else{current_scale = 1;}
+	
+	
+	
 	curr_turn = turns;
 }
 

@@ -22,16 +22,18 @@ draw_sprite(sprCross, 0, x,y-sprite_height/2);
 if(!dead)
 {
 	
-	draw_set_color(_turn_color)
-	draw_circle(x+sprite_width/2,y,16,-1);
-	draw_set_color(c_white);
-	draw_text(x+sprite_width/2,y,string(_current_turn-1));
-	
 	if(miss > 0)
 	draw_text(x, y-sprite_height-16, "MISS");
 	
 	if(_current_turn == 1) 
 	draw_sprite_ext(sprExclamation, 0, x,y-sprite_height,0.1,0.1,0,c_white,1);
+	else 
+	{
+		draw_set_color(_turn_color)
+		draw_circle(x,y-sprite_height-16,16,-1);
+		draw_set_color(c_white);
+		draw_text(x,y-sprite_height - 16,string(_current_turn-1));	
+	}
 }
 
 if(debug)

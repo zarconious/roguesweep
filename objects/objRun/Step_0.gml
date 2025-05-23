@@ -1,4 +1,4 @@
-if(hp>0)
+if(curr_hp>0)
 curr_hp = lerp(curr_hp,hp,0.2);
 
 if(shield>0)

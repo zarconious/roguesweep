@@ -5,19 +5,27 @@ objRun.current_turn = 0;
 
 switch(objRun.current_round)
 {
-	case 1: 	enemy_list_tag = [ENEMIES.A1_ENEMY1]; 
+	case 1: 	enemy_list_tag = [ENEMIES.RAT]; 
 				break;
-	case 2: 	enemy_list_tag = [ENEMIES.A1_ENEMY2,ENEMIES.A1_ENEMY2]; 
+	case 2: 	enemy_list_tag = [ENEMIES.BAT,ENEMIES.BAT]; 
 				break;
-	case 3: 	enemy_list_tag = [ENEMIES.A1_ENEMY2, ENEMIES.A1_ENEMY1,ENEMIES.A1_ENEMY2];
+	case 3: 	enemy_list_tag = [ENEMIES.BAT, ENEMIES.RAT,ENEMIES.BAT];
 				break;
-	case 4: 	enemy_list_tag = [ENEMIES.A1_ENEMY2, ENEMIES.A1_ENEMY1,ENEMIES.A1_ENEMY2];
+	case 4: 	enemy_list_tag = [ENEMIES.RAT, ENEMIES.SHARK, ENEMIES.RAT];
 				break;
-	case 5: 	enemy_list_tag = [ENEMIES.A1_ENEMY1,ENEMIES.A1_ENEMY5,ENEMIES.A1_ENEMY1];
+	case 5: 	enemy_list_tag = [ENEMIES.SHARK,ENEMIES.SHARK];
 				break;
-	case 6: 	enemy_list_tag = [ENEMIES.A1_ENEMY2, ENEMIES.A1_ENEMY11, ENEMIES.A1_ENEMY2];
+	case 6: 	enemy_list_tag = [ENEMIES.PENGUIN, ENEMIES.DRAGON, ENEMIES.PENGUIN];
 				break;
-	default: 	enemy_list_tag = [ENEMIES.A1_ENEMY1]; break;
+	case 7: 	enemy_list_tag = [ENEMIES.PENGUIN, ENEMIES.DRAGON, ENEMIES.PENGUIN];
+				break;
+	case 8: 	enemy_list_tag = [ENEMIES.PENGUIN, ENEMIES.DRAGON, ENEMIES.PENGUIN];
+				break;
+	case 9: 	enemy_list_tag = [ENEMIES.PENGUIN, ENEMIES.DRAGON, ENEMIES.PENGUIN];
+				break;
+	case 10: 	enemy_list_tag = [ENEMIES.PENGUIN, ENEMIES.DRAGON, ENEMIES.PENGUIN];
+				break;
+	default: 	enemy_list_tag = [ENEMIES.RAT]; break;
 }
 
 enemy_count = array_length(enemy_list_tag);
@@ -31,6 +39,7 @@ for(var i = 0; i < enemy_count; i++)
 		turns: all_enemies[enemy_list_tag[i]].turns,
 		mine: all_enemies[enemy_list_tag[i]].mine,
 		max_hp: all_enemies[enemy_list_tag[i]].hp,
+		count: all_enemies[enemy_list_tag[i]].count,
 	});
 }
  selected_enemy = enemy_list_id[0];

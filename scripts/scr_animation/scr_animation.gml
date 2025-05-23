@@ -12,8 +12,8 @@ function sine_between(time, period, minimum, maximum) {
 function create_particle(xx,yy, number, type = 0) {
 	repeat(number)
 	{
-		instance_create_depth(xx,yy-32,-100,objParticle, {
-			image_index: type});	
+		var _part = instance_create_depth(xx,yy-32,-100,objParticle);
+		_part.image_index = type;
 	}
 }
 
@@ -29,6 +29,7 @@ function draw_hp(xx,yy,width,height,hp,maxhp,color = #F95738, show_max = true) {
 	draw_set_font(fnt_big);
 	draw_set_color(c_white);
 	draw_set_halign(fa_center);
+	draw_set_valign(fa_middle);
 	if(show_max)
 	draw_text(xx+width/2, yy+height/2, string(floor(hp)) + "/" + string(maxhp));
 	else

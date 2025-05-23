@@ -35,6 +35,18 @@ if(debug)
 	}
 }
 
+if(magnifier)
+{
+	
+	if(_tile != TILES.EMPTY && !_open)
+	{
+		if(_tile == TILES.ENEMY)
+		draw_sprite_ext(sprMines, get_tile_tag(row,col), x,y,0.8,0.8,0,c_red,0.2);
+		else
+		draw_sprite_ext(sprMoves, get_tile_tag(row,col), x,y,0.8,0.8,0,c_green,0.2);
+	}
+}
+
 if(_open && !position_meeting(x,y,objItem))
 {
 	//TODO: Optimize this
@@ -44,13 +56,13 @@ if(_open && !position_meeting(x,y,objItem))
 		switch(_mine_count)
 		{
 			case 1: draw_set_color(c_blue); break;	
-			case 2: draw_set_color(c_purple); break;	
-			case 3: draw_set_color(c_olive); break;	
-			case 4: draw_set_color(c_orange); break;	
-			case 5: draw_set_color(c_maroon); break;	
-			case 6: draw_set_color(c_ltgray); break;	
-			case 7: draw_set_color(c_dkgray); break;	
-			case 8: draw_set_color(c_black); break;	
+			case 2: 
+			case 3: draw_set_color(c_purple);break;	
+			case 4: 
+			case 5: draw_set_color(c_fuchsia); break;		
+			case 6: 	
+			case 7: 	
+			case 8: draw_set_color(c_red); break;	
 		}
 		
 		if(_mine_count > 0)

@@ -46,6 +46,8 @@ function create_new_board(width, height){
 	
 	add_coins(objRun.max_coins);
 	add_moves(objRun.max_moves);
+	add_hold();
+	update_closed_tiles();
 }
 
 function get_item_data(item){
@@ -62,7 +64,7 @@ function get_mine_data(item){
 }
 
 
-function random_tile(_closed = false, _empty = false) {
+function random_tile(_closed = 0, _empty = 0) {
 	var _tiles = get_tiles(_closed,_empty);
 	var _tiles_number = array_length(_tiles);
 	
@@ -76,7 +78,7 @@ function random_tile(_closed = false, _empty = false) {
 	return noone;
 }
 
-function add_item(item,type, _closed = false, _empty = false){
+function add_item(item,type, _closed = 0, _empty = 0){
 	var _tile = random_tile(_closed,_empty);
 	if(_tile){
 		_tile.tile = type;
@@ -93,10 +95,12 @@ function add_item(item,type, _closed = false, _empty = false){
 	}
 	
 	show_debug_message("Can't add item " + string(all_items[item.tag]));
+	update_closed_tiles();
 	return false;
 }
 
-function get_tiles(_closed = false, _empty = false){
+function update_closed_tiles()
+{
 	var _tiles = [];
 	for(var _col = 0; _col < objBoard.board_height; _col++)
 	{
@@ -108,7 +112,43 @@ function get_tiles(_closed = false, _empty = false){
 			var _get = false;
 			
 			// TODO: Improve this so we can get all types of tiles
-			if(_closed && _is_closed && _empty && _is_empty) _get = true;
+			if(_is_closed) _get = true;
+			
+			if(_get) array_push(_tiles,objBoard.board[_row,_col]);
+		}
+	}
+	objBoard.closedTiles = array_length(_tiles);
+	return _tiles;
+}
+
+function get_tiles(_closed = 0, _empty = 0){
+	var _tiles = [];
+	for(var _col = 0; _col < objBoard.board_height; _col++)
+	{
+		for(var _row = 0; _row < objBoard.board_width; _row++)
+		{	
+			var _tile = objBoard.board[_row,_col];
+			var _is_empty = _tile.tile == TILES.EMPTY;
+			var _is_closed = !_tile.open;
+			var _get = false;
+			
+			if(_closed == -1)
+			{
+				if(_empty == 1 && _is_empty) _get = true;
+				if(_empty == 0 && !_is_empty) _get = true;
+			}
+			
+			if(_empty == -1)
+			{
+				if(_closed == 1 && _is_closed) _get = true;
+				if(_closed == 0 && !_is_closed) _get = true;
+			}
+			
+			if(_closed == 1 && _empty == 1 && _is_closed && _is_empty) _get = true;
+			if(_closed == 1 && _empty == 0 && _is_closed && !_is_empty) _get = true;
+			if(_closed == 0 && _empty == 1 && !_is_closed && _is_empty) _get = true;
+			if(_closed == 0 && _empty == 0 && !_is_closed && !_is_empty) _get = true;
+			if(_closed == -1 && _empty == -1) _get = true;
 			
 			if(_get) array_push(_tiles,objBoard.board[_row,_col]);
 		}
@@ -140,9 +180,23 @@ function get_board_mines(){
 function add_moves(max_moves){
 	var _shuffled_moves = array_shuffle(objRun.move_bag);
 	var _added_moves = [];
-	for(var i = 0; i<max_moves; i++)
+	var _max_add = min(max_moves, array_length(_shuffled_moves));
+	for(var i = 0; i< _max_add; i++)
 	{
-		var _result = add_item(_shuffled_moves[i],TILES.ITEM,true,true);
+		var _result = add_item(_shuffled_moves[i],TILES.ITEM,1,1);
+		if(_result) array_push(_added_moves,_result);
+	}
+	update_lists();
+	return _added_moves;
+}
+
+function add_hold(){
+	var _mines = objCombat.hold_list;
+	var _mines_length = array_length(_mines);
+	var _added_moves = [];
+	for(var i = 0; i<_mines_length; i++)
+	{
+		var _result = add_item(array_pop(_mines),TILES.ENEMY,1,1);
 		if(_result) array_push(_added_moves,_result);
 	}
 	update_lists();
@@ -182,8 +236,6 @@ function count_mines(){
 			{
 				if objBoard.board[row + _row,col + _col].tile == TILES.ENEMY
 				_mine_count++;
-			
-				
 			}
 		}
 	}
@@ -212,23 +264,24 @@ function open_tile(row,col, clicked = false){
 	
 			if(_tile.tile == TILES.ENEMY) 
 			{
-					instance_create_depth(_tile_obj.x,_tile_obj.y,-10,objMine, {
+					var _mine = instance_create_depth(_tile_obj.x,_tile_obj.y,-10,objMine, {
 						index: _tile.index,
 						tag: _tile.tag,
-						image_index: _tile.tag,
 						description: all_mines[_tile.tag].description
 					});
+					
+					_mine.image_index= _tile.tag;
 			}
 	
 			if(_tile.tile == TILES.ITEM)
 			{
-				instance_create_depth(_tile_obj.x,_tile_obj.y,-10,objItem, {
+				var _item = instance_create_depth(_tile_obj.x,_tile_obj.y,-10,objItem, {
 					index: _tile.index,
 					tag: _tile.tag,
-					image_index: _tile.tag,
 					description: all_items[_tile.tag].description
 				});
-				find_item(_tile.index);
+				_item.image_index = _tile.tag;
+				if(_tile.index != -1) find_item(_tile.index);
 			}
 			
 			if(_tile.mines == 0)
@@ -241,33 +294,17 @@ function open_tile(row,col, clicked = false){
 
 function open_adjacent_tiles(row,col){
 	
-	// Uncover nearby tiles
-	if(col - 1 >= 0)
+	for(var i=-1; i<2; i++)
 	{
-		var _left_tile = objBoard.board[row,col - 1];
-		//if(clicked)show_message(_left_tile);
-		if(_left_tile.tile != TILES.ENEMY) open_tile(row,col - 1);
-	}
-		
-	if(row - 1 >= 0)
-	{
-		var _top_tile = objBoard.board[row - 1,col];
-		//if(clicked)show_message(_top_tile);
-		if(_top_tile.tile != TILES.ENEMY) open_tile(row - 1,col);
-	}
-	
-	if(row + 1 < objBoard.board_width)
-	{
-		var _bottom_tile = objBoard.board[row + 1,col];
-		//if(clicked)show_message(_bottom_tile);
-		if(_bottom_tile.tile != TILES.ENEMY) open_tile(row + 1,col);
-	}
-	
-	if(col + 1 < objBoard.board_height)
-	{
-		var _right_tile = objBoard.board[row,col + 1];
-		//if(clicked)show_message(_right_tile);
-		if(_right_tile.tile != TILES.ENEMY) open_tile(row,col + 1);
+		for(var j=-1; j<2; j++)
+		{
+			if(col + j >= 0 && col + j < objBoard.board_height
+			&& row + i < objBoard.board_width && row + i >= 0)
+			{
+				var _tile = objBoard.board[row + i,col + j];
+				if(_tile.tile != TILES.ENEMY) open_tile(row + i,col + j);
+			}
+		}	
 	}
 }
 
@@ -284,6 +321,26 @@ function add_to_mine_list(mine){
 	update_lists();
 }
 
+function add_to_hold_list(mine){
+	var _added = false;
+	with(objCombat)
+	{
+		var _hold_list_length = array_length(hold_list);
+		if(_hold_list_length < objRun.board_size)
+		{
+			array_push(hold_list,
+			{
+				index: _hold_list_length,
+				tag: mine.tag
+			});
+			_added = true;
+		}
+	}
+	update_lists();
+	
+	return _added;
+}
+
 function find_item(index){
 	with(objCombat)
 	{
@@ -298,7 +355,7 @@ function use_item(index){
 		array_push(used_list,index);
 		update_lists();
 		
-		if(array_length(used_list) == objRun.max_moves)
+		if(array_length(used_list) == min(objRun.max_moves, array_length(objRun.move_bag)))
 		{
 			reset_board();	
 		}
@@ -368,31 +425,74 @@ function add_to_bag(item){
 }
 
 function update_lists(){
-	//TODO: Make generics lists so iterating is less used
 	if(!instance_exists(objCombat)) return false;
 	with(objItemUI) instance_destroy();
 	update_bag();
 	update_found();
 	update_mines();
+	update_hold();
+}
+function reset_lists(){
+	found_list = [];
+	used_list = [];
+	mine_list = [];
+	hold_list = [];
+	mine_used_list = [];
+	enemy_list_id = [];
+	enemy_list_tag = [];
+	update_lists();
 }
 
 function update_mines(){
 	var _mines = objCombat.mine_list;
 	var _mines_count = array_length(_mines);
 	objCombat.mines_number = _mines_count;
-	
-	for(var i = 0; i < _mines_count; i++)
+	if(objRun.minesArea != noone)
 	{
-		var _tag = _mines[i].tag;
-		var _mine = instance_create_depth(objRun.minesArea.x + (i mod 5)*(objRun.minesArea.width/5) + 32, objRun.minesArea.y + floor(i div 5)*64 + 96,0,objItemUI,{
-			index: _mines[i].index,
-			tag: _tag,
-			image_index: _tag,
-			sprite_index: sprMines,
-			description: all_mines[_tag].description,
-		})
-		_mine.found = true;
-		_mine.used = is_mine_used(_mines[i].index);
+		var _startX = objRun.minesArea._topX;
+		var _startY = objRun.minesArea._topY;
+		var _width = objRun.minesArea._width;
+		var _maxW = 5;
+		var _distY = 64;
+	
+		for(var i = 0; i < _mines_count; i++)
+		{
+			var _tag = _mines[i].tag;
+			var _mine = instance_create_depth(_startX + (i mod _maxW)*(_width/_maxW) + 32, _startY + floor(i div _maxW)*_distY + 96,0,objItemUI,{
+				index: _mines[i].index,
+				tag: _tag,
+				description: all_mines[_tag].description,
+			})
+			_mine.image_index = _tag;
+			_mine.sprite_index = sprMines;
+			_mine.found = true;
+			_mine.used = is_mine_used(_mines[i].index);
+		}
+	}
+}
+function update_hold(){
+	var _mines = objCombat.hold_list;
+	var _mines_count = array_length(_mines);
+	if(objRun.minesArea != noone)
+	{
+		var _startX = objRun.minesArea._topX;
+		var _startY = objRun.minesArea._topY;
+		var _width = objRun.minesArea._width;
+		var _maxW = 5;
+		var _distY = 64;
+	
+		for(var i = 0; i < _mines_count; i++)
+		{
+			var _offset = array_length(objCombat.mine_list) + i;
+			var _tag = _mines[i].tag;
+			var _mine = instance_create_depth(_startX + (_offset mod _maxW)*(_width/_maxW) + 32, _startY + floor(_offset div _maxW)*_distY + 96,0,objItemUI,{
+				index: _mines[i].index,
+				tag: _tag,
+				description: all_mines[_tag].description + " (on hold)",
+			})
+			_mine.image_index =_tag;
+			_mine.sprite_index = sprMines;
+		}
 	}
 }
 
@@ -401,16 +501,22 @@ function update_bag(){
 	var _item_count = array_length(_items);
 	if(objRun.bagArea != noone)
 	{
-		
+		var _startX = objRun.bagArea._topX;
+		var _startY = objRun.bagArea._topY + 96;
+		var _width = objRun.bagArea._width;
+		var _maxW = 5;
+		var _distY = 64;
+	
 		for(var i = 0; i < _item_count; i++)
 		{
 			var _tag = _items[i].tag;
-			var _item = instance_create_depth(objRun.bagArea.x + (i mod 5)*(objRun.bagArea.width/5) + 32, objRun.bagArea.y + floor(i div 5)*64 + 32,0,objItemUI,{
+			var _item = instance_create_depth(_startX + (i mod _maxW)*(_width/_maxW) + 32, _startY + floor(i div _maxW)*_distY + 32,0,objItemUI,{
 				index: _items[i].index,
 				tag: _tag,
-				image_index: _tag,
+				
 				description: all_items[_tag].description,
 			})
+			_item.image_index = _tag;
 			_item.found = is_found(_items[i].index);
 			_item.used = is_used(_items[i].index);
 		}
@@ -422,24 +528,34 @@ function update_found(){
 	var _items = objRun.move_bag;
 	var _item_count = array_length(_items);
 	var _found_count = 0;
-	for(var i = 0; i < _item_count; i++)
-	{
-		if(is_found(_items[i].index))
-		{
-			var _tag = _items[i].tag;
-			
-			var _item = instance_create_depth(objRun.movesArea.x + 64*(_found_count) + 32, objRun.movesArea.y + 32,0,objItemUI,{
-				index: _items[i].index,
-				tag: _tag,
-				image_index: _tag,
-				description: all_items[_tag].description,
-			})
-			_item.used = is_used(_items[i].index);
-			_item.found = true;
-			_found_count++;
-		}
 	
+	if(objRun.movesArea != noone)
+	{
+		var _startX = objRun.movesArea._topX;
+		var _startY = objRun.movesArea._topY + 64;
+		var _width = objRun.movesArea._width;
+		var _distX = 42;
+		
+		for(var i = 0; i < _item_count; i++)
+		{
+			if(is_found(_items[i].index))
+			{
+				var _tag = _items[i].tag;
+			
+				var _item = instance_create_depth(_startX + _distX*(_found_count) + 32, _startY + 32,0,objItemUI,{
+					index: _items[i].index,
+					tag: _tag,
+					description: all_items[_tag].description,
+				})
+				_item.image_index = _tag;
+				_item.used = is_used(_items[i].index);
+				_item.found = true;
+				_found_count++;
+			}
+		}
 	}
+	if(instance_exists(objCombat))
+	objCombat.found_number = _found_count;
 }
 
 function get_mine_count(row,col){

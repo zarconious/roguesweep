@@ -1,5 +1,5 @@
 {
-  "$GMProject":"",
+  "$GMProject":"v1",
   "%Name":"RogueSweeper",
   "AudioGroups":[
     {"$GMAudioGroup":"","%Name":"audiogroup_default","name":"audiogroup_default","resourceType":"GMAudioGroup","resourceVersion":"2.0","targets":-1,},
@@ -29,18 +29,17 @@
     {"$GMFolder":"","%Name":"Tile Sets","folderPath":"folders/Tile Sets.yy","name":"Tile Sets","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Timelines","folderPath":"folders/Timelines.yy","name":"Timelines","resourceType":"GMFolder","resourceVersion":"2.0",},
   ],
+  "ForcedPrefabProjectReferences":[],
   "IncludedFiles":[],
   "isEcma":false,
   "LibraryEmitters":[],
   "MetaData":{
-    "IDEVersion":"2024.11.0.179",
+    "IDEVersion":"2024.13.1.193",
   },
   "name":"RogueSweeper",
   "resources":[
     {"id":{"name":"fnt_big","path":"fonts/fnt_big/fnt_big.yy",},},
     {"id":{"name":"fnt_small","path":"fonts/fnt_small/fnt_small.yy",},},
-    {"id":{"name":"obj_flexpanel","path":"objects/obj_flexpanel/obj_flexpanel.yy",},},
-    {"id":{"name":"obj_ui_element","path":"objects/obj_ui_element/obj_ui_element.yy",},},
     {"id":{"name":"objBoard","path":"objects/objBoard/objBoard.yy",},},
     {"id":{"name":"objButton","path":"objects/objButton/objButton.yy",},},
     {"id":{"name":"objCoinAnim","path":"objects/objCoinAnim/objCoinAnim.yy",},},
@@ -57,7 +56,9 @@
     {"id":{"name":"objRun","path":"objects/objRun/objRun.yy",},},
     {"id":{"name":"objShop","path":"objects/objShop/objShop.yy",},},
     {"id":{"name":"objTile","path":"objects/objTile/objTile.yy",},},
+    {"id":{"name":"objUI","path":"objects/objUI/objUI.yy",},},
     {"id":{"name":"objUIButton","path":"objects/objUIButton/objUIButton.yy",},},
+    {"id":{"name":"objUIpanel","path":"objects/objUIpanel/objUIpanel.yy",},},
     {"id":{"name":"objUpgrade","path":"objects/objUpgrade/objUpgrade.yy",},},
     {"id":{"name":"Room1_1","path":"rooms/Room1_1/Room1_1.yy",},},
     {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},

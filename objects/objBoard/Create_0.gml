@@ -13,7 +13,7 @@ draw_mines = [];
 square_size = 21;
 max_coins = 5;
 board = [];
-closedTiles = [];
+closedTiles = 0;
 openedTiles = [];
 
 is_opening = false;

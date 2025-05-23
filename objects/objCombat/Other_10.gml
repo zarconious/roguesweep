@@ -1,10 +1,4 @@
-found_list = [];
-used_list = [];
-mine_list = [];
-mine_used_list = [];
-enemy_list_id = [];
-
-enemy_list_tag = [];
+reset_lists();
 
 if(objRun.current_event == "battle")
 alarm[1] = step_interval;

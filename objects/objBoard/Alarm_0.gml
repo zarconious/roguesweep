@@ -1,3 +1,4 @@
+update_closed_tiles();
 if(free_move)
 {
 	objCombat.player_turn = true;

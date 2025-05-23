@@ -11,6 +11,7 @@ function enums(){
 	MSC_Gem,
 	PUP_Strength,
 	DMG_Boomerang,
+	MSC_Magnifier,
 	DMG_Poison,
 	DMG_Freeze,
 	
@@ -32,18 +33,18 @@ function enums(){
 	}
 	
 	enum ENEMIES {
-    A1_ENEMY1,
-    A1_ENEMY2,
-    A1_ENEMY3,
-    A1_ENEMY4,
-    A1_ENEMY5,
-    A1_ENEMY6,
-    A1_ENEMY7,
-    A1_ENEMY8,
-    A1_ENEMY9,
-    A1_ENEMY10,
-    A1_ENEMY11,
-    A1_ENEMY12,
+    RAT,
+    BAT,
+    SEAL,
+    SNAKE,
+    SHARK,
+    OWL,
+    DOG,
+    SCORPION,
+    PENGUIN,
+    MONKEY,
+    DRAGON,
+    DOVE,
 	}
 	
 	enum TILES {

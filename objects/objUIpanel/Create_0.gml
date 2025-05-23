@@ -1,0 +1,9 @@
+darkPurple = make_color_rgb(102,77,120);
+depth = 1;
+alarm[1] = 1;
+_width = 0;
+_height = 0;
+_topX = 0;
+_topY = 0;
+_botX = 0;
+_botY = 0;
