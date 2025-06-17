@@ -1,4 +1,6 @@
 darkPurple = make_color_rgb(102,77,120);
+//brown = make_color_hsv(15,48,64);
+brown = make_color_rgb(163,105,85);
 depth = 1;
 alarm[1] = 1;
 _width = 0;

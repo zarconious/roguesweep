@@ -19,16 +19,27 @@ function enums(){
 	
 	enum MINES {
     MINE_Basic,
-    MINE_Strong,
+    MINE_Basic2,
+    MINE_Basic3,
     MINE_Ice,
+    MINE_Ice2,
+    MINE_Ice3,
     MINE_Poison,
+    MINE_Poison2,
+    MINE_Poison3,
+    MINE_Fire,
+    MINE_Fire2,
+    MINE_Fire3,
+    MINE_Hide,
+    MINE_Hide2,
+    MINE_Hide3,
     STS_Ice,
     STS_Poison,
 	STS_Cover,
 	STS_Hide,
-	STS_Steal,
 	STS_Fire,
-	STS_Heal,
+	MSC_Heal,
+	MSC_Steal,
 	
 	}
 	

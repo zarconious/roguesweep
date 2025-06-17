@@ -1,6 +1,7 @@
 // Created for every combat encounter
 
-space = 128;
+spaceY = 128;
+spaceX = 250;
 enemy_turn = 0;
 player_turn = false;
 enemyArea = noone;

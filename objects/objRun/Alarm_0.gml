@@ -1,8 +1,11 @@
 
 if(current_event == "battle")
 {
+	
+	background_size_goal = 0;
+	
 	current_round += 1;
-	if(current_round == 10)
+	if(current_round == 11)
 	{
 		current_event = "end";
 	}

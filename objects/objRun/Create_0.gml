@@ -14,11 +14,13 @@ curr_hp = max_hp;
 curr_shield = shield;
 curr_coins = shield;
 curr_str = shield;
-board_size = 4;
+board_size = 3;
 max_moves = board_size;
 max_coins = board_size;
 max_resets = 2;
 resets = max_resets;
+background_size = 0;
+background_size_goal = 0;
 
 //TODO Change according to run
 move_bag = [];

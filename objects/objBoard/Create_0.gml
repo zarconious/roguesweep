@@ -10,7 +10,7 @@ found_items = [];
 mine_list = [];
 draw_mines = [];
 
-square_size = 21;
+square_size = 32;
 max_coins = 5;
 board = [];
 closedTiles = 0;

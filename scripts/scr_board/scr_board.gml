@@ -37,7 +37,7 @@ function create_new_board(width, height){
 			}
 			
 			var _draw_x = _row * square_size * 2 - square_size*(board_width-1);
-			var _square = instance_create_depth(x + _draw_x,y + _draw_y,0, objTile);
+			var _square = instance_create_depth(x + _draw_x,y + _draw_y,-_col, objTile);
 			_square.row = _row;
 			_square.col = _col;
 			board[_row,_col].object = _square;
@@ -110,6 +110,7 @@ function update_closed_tiles()
 			var _is_empty = _tile.tile == TILES.EMPTY;
 			var _is_closed = !_tile.open;
 			var _get = false;
+			if(instance_exists(_tile.object)) _tile.object.cracked = false;
 			
 			// TODO: Improve this so we can get all types of tiles
 			if(_is_closed) _get = true;
@@ -252,42 +253,53 @@ function open_tile(row,col, clicked = false){
 		objBoard.alarm[0] = 5;
 		
 		var _tile = objBoard.board[row,col];
-	
-		if(!is_open(row,col))
+		var _tile_obj = _tile.object;
+		
+		if(!is_open(row,col) && !_tile_obj.cracked)
 		{
-			_tile.open = true;
-			var _tile_obj = _tile.object;
-			_tile_obj.image_index = 1;
-	
-			if(_tile.has_coin)
-			instance_create_depth(x,y,-100,objCoinAnim);
-	
-			if(_tile.tile == TILES.ENEMY) 
+			var _status = objBoard.board[row,col].status;
+			if( _status == TILESTATUS.ICE)
 			{
-					var _mine = instance_create_depth(_tile_obj.x,_tile_obj.y,-10,objMine, {
+				_tile_obj.cracked = true;
+				if(_status == TILESTATUS.ICE) objBoard.board[row,col].status = TILESTATUS.NORMAL;
+			}
+			else
+			{
+				_tile.open = true;
+				_tile_obj.image_index = 1;
+	
+				if(_tile.has_coin)
+				instance_create_depth(x,y,-100,objCoinAnim);
+	
+				if(_tile.tile == TILES.ENEMY) 
+				{
+						var _mine = instance_create_depth(_tile_obj.x,_tile_obj.y,-10,objMine, {
+							index: _tile.index,
+							tag: _tile.tag,
+							description: all_mines[_tile.tag].description
+						});
+					
+						_mine.image_index= _tile.tag;
+				}
+	
+				if(_tile.tile == TILES.ITEM)
+				{
+					var _is_hidden = _status == TILESTATUS.HIDDEN;
+					var _item = instance_create_depth(_tile_obj.x,_tile_obj.y,-10,objItem, {
 						index: _tile.index,
 						tag: _tile.tag,
-						description: all_mines[_tile.tag].description
+						hidden: _is_hidden,
+						description: _is_hidden ? "???" : all_items[_tile.tag].description
 					});
-					
-					_mine.image_index= _tile.tag;
-			}
-	
-			if(_tile.tile == TILES.ITEM)
-			{
-				var _item = instance_create_depth(_tile_obj.x,_tile_obj.y,-10,objItem, {
-					index: _tile.index,
-					tag: _tile.tag,
-					description: all_items[_tile.tag].description
-				});
-				_item.image_index = _tile.tag;
-				if(_tile.index != -1) find_item(_tile.index);
-			}
+					_item.image_index = _is_hidden ? 10 : _tile.tag;
+					if(_tile.index != -1) find_item(_tile.index, _is_hidden);
+				}
 			
-			if(_tile.mines == 0)
-			{
-				// Time to uncover tiles
-				_tile.object.alarm[0] = 2;
+				if(_tile.mines == 0)
+				{
+					// Time to uncover tiles
+					_tile.object.alarm[0] = 2;
+				}
 			}
 		}
 }
@@ -341,10 +353,10 @@ function add_to_hold_list(mine){
 	return _added;
 }
 
-function find_item(index){
+function find_item(index, hidden){
 	with(objCombat)
 	{
-		array_push(found_list,index);
+		array_push(found_list,{index: index, hidden: hidden});
 		update_lists();
 	}
 }
@@ -376,7 +388,20 @@ function is_found(index){
 	var _item_count = array_length(_items);
 	for(var i = 0; i < _item_count; i++)
 	{
-		if(_items[i] == index) {
+		if(_items[i].index == index) {
+			return true
+		}
+	}	
+	return false;
+}
+
+function is_hidden(index){
+	if(!instance_exists(objCombat)) return false;
+	var _items = objCombat.found_list;
+	var _item_count = array_length(_items);
+	for(var i = 0; i < _item_count; i++)
+	{
+		if(_items[i].index == index && _items[i].hidden) {
 			return true
 		}
 	}	
@@ -449,16 +474,16 @@ function update_mines(){
 	objCombat.mines_number = _mines_count;
 	if(objRun.minesArea != noone)
 	{
-		var _startX = objRun.minesArea._topX;
-		var _startY = objRun.minesArea._topY;
-		var _width = objRun.minesArea._width;
+		var _startX = objRun.minesArea._topX + 56;
+		var _startY = objRun.minesArea._topY + 120;
+		var _width = objRun.minesArea._width - 32;
 		var _maxW = 5;
 		var _distY = 64;
 	
 		for(var i = 0; i < _mines_count; i++)
 		{
 			var _tag = _mines[i].tag;
-			var _mine = instance_create_depth(_startX + (i mod _maxW)*(_width/_maxW) + 32, _startY + floor(i div _maxW)*_distY + 96,0,objItemUI,{
+			var _mine = instance_create_depth(_startX + (i mod _maxW)*(_width/_maxW), _startY + floor(i div _maxW)*_distY,0,objItemUI,{
 				index: _mines[i].index,
 				tag: _tag,
 				description: all_mines[_tag].description,
@@ -475,9 +500,9 @@ function update_hold(){
 	var _mines_count = array_length(_mines);
 	if(objRun.minesArea != noone)
 	{
-		var _startX = objRun.minesArea._topX;
-		var _startY = objRun.minesArea._topY;
-		var _width = objRun.minesArea._width;
+		var _startX = objRun.minesArea._topX  + 56;
+		var _startY = objRun.minesArea._topY  + 120;
+		var _width = objRun.minesArea._width - 32;
 		var _maxW = 5;
 		var _distY = 64;
 	
@@ -485,7 +510,7 @@ function update_hold(){
 		{
 			var _offset = array_length(objCombat.mine_list) + i;
 			var _tag = _mines[i].tag;
-			var _mine = instance_create_depth(_startX + (_offset mod _maxW)*(_width/_maxW) + 32, _startY + floor(_offset div _maxW)*_distY + 96,0,objItemUI,{
+			var _mine = instance_create_depth(_startX + (_offset mod _maxW)*(_width/_maxW), _startY + floor(_offset div _maxW)*_distY,0,objItemUI,{
 				index: _mines[i].index,
 				tag: _tag,
 				description: all_mines[_tag].description + " (on hold)",
@@ -501,19 +526,18 @@ function update_bag(){
 	var _item_count = array_length(_items);
 	if(objRun.bagArea != noone)
 	{
-		var _startX = objRun.bagArea._topX;
-		var _startY = objRun.bagArea._topY + 96;
-		var _width = objRun.bagArea._width;
+		var _startX = objRun.bagArea._topX + 56;
+		var _startY = objRun.bagArea._topY + objRun.bagArea._height/2 + 64;
+		var _width = objRun.bagArea._width - 32;
 		var _maxW = 5;
 		var _distY = 64;
 	
 		for(var i = 0; i < _item_count; i++)
 		{
 			var _tag = _items[i].tag;
-			var _item = instance_create_depth(_startX + (i mod _maxW)*(_width/_maxW) + 32, _startY + floor(i div _maxW)*_distY + 32,0,objItemUI,{
+			var _item = instance_create_depth(_startX + (i mod _maxW)*(_width/_maxW), _startY + floor(i div _maxW)*_distY,0,objItemUI,{
 				index: _items[i].index,
 				tag: _tag,
-				
 				description: all_items[_tag].description,
 			})
 			_item.image_index = _tag;
@@ -529,26 +553,29 @@ function update_found(){
 	var _item_count = array_length(_items);
 	var _found_count = 0;
 	
-	if(objRun.movesArea != noone)
+	if(objRun.minesArea != noone)
 	{
-		var _startX = objRun.movesArea._topX;
-		var _startY = objRun.movesArea._topY + 64;
-		var _width = objRun.movesArea._width;
-		var _distX = 42;
+		var _startX = objRun.minesArea._topX + 48;
+		var _startY = objRun.minesArea._topY + objRun.minesArea._height-128;
+		var _width = objRun.minesArea._width;
+		var _maxW = 5;
+		var _distY = 64;
 		
 		for(var i = 0; i < _item_count; i++)
 		{
 			if(is_found(_items[i].index))
 			{
 				var _tag = _items[i].tag;
-			
-				var _item = instance_create_depth(_startX + _distX*(_found_count) + 32, _startY + 32,0,objItemUI,{
+				var _hidden = is_hidden(_items[i].index)
+				var _used = is_used(_items[i].index);
+				var _item = instance_create_depth(_startX + (_found_count mod _maxW)*(_width/_maxW), _startY + floor(_found_count div _maxW)*_distY,0,objItemUI,{
 					index: _items[i].index,
+					hidden: _used ? false : _hidden,
 					tag: _tag,
 					description: all_items[_tag].description,
 				})
-				_item.image_index = _tag;
-				_item.used = is_used(_items[i].index);
+				_item.image_index = !_used && _hidden ? 10 : _tag;
+				_item.used = _used;
 				_item.found = true;
 				_found_count++;
 			}

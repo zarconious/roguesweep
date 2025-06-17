@@ -35,8 +35,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sprButton",
-    "path":"sprites/sprButton/sprButton.yy",
+    "name":"sprRefresh",
+    "path":"sprites/sprRefresh/sprRefresh.yy",
   },
   "spriteMaskId":null,
   "visible":true,

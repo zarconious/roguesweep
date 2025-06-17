@@ -9,6 +9,6 @@ if(objRun.current_event == "shop")
 }
 else
 {
-	description = "Refresh (x" + string(objRun.resets) + ")";
+	description = "Refresh Board (x" + string(objRun.resets) + ")";
 	image_index = 0;
 }

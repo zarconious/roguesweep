@@ -15,9 +15,9 @@ if(instance_exists(objRun))
 		//var _btn2 = instance_create_depth(_topX + 88*2,_topY+_height - 32,0,objUIButton, 
 		//{description: "map"});
 		//_btn2.image_index = 5;
-		var _btn3 = instance_create_depth(_topX + 32,_topY + 32,0,objUIButton, 
-		{description: "inventory"});
-		_btn3.image_index = 4;
+		//var _btn3 = instance_create_depth(_topX + 32,_topY + 32,0,objUIButton, 
+		//{description: "inventory"});
+		//_btn3.image_index = 4;
 		
 		objRun.bagArea = id;
 	}
@@ -37,11 +37,10 @@ if(instance_exists(objRun))
 	
 	if(name == "traps")
 	{
-		var _btn1 = instance_create_depth(_topX+32 ,_topY+32,0,objUIButton, 
-		{description: "Mines in board / Hidden tiles"});
-		_btn1.image_index = 8;
+		//var _btn1 = instance_create_depth(_topX+32 ,_topY+32,0,objUIButton, 
+		//{description: "Mines in board / Hidden tiles"});
+		//_btn1.image_index = 8;
 		objRun.minesArea = id;
-
 	}
 	if(name == "badges")
 	{
@@ -51,13 +50,13 @@ if(instance_exists(objRun))
 		objRun.badgesArea = id;
 	}
 
-	if(name == "moves")
-	{
-		var _btn1 = instance_create_depth(_topX +32,_topY +32,0,objUIButton, 
-		{description: "Moves in board"});
-		_btn1.image_index = 9;
-		objRun.movesArea = id;
-	}
+	//if(name == "moves")
+	//{
+	//	var _btn1 = instance_create_depth(_topX +32,_topY +32,0,objUIButton, 
+	//	{description: "Moves in board"});
+	//	_btn1.image_index = 9;
+	//	objRun.movesArea = id;
+	//}
 	if(name == "board")
 	{
 		instance_create_depth(_topX+_width/2,_topY+_height/2,0,objBoard);
@@ -71,7 +70,7 @@ else
 {
 	if(name == "board")
 	{
-		var _b = instance_create_depth(_topX+_width/2,_topY+_height-64,0,objButton);
-		_b.image_index = 1;
+		instance_create_depth(_topX+_width/2,_topY+_height-64,0,objButton);
+
 	}
 }

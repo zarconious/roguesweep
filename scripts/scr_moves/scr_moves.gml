@@ -26,6 +26,8 @@ function kill_player() {
 		description = "RIP";
 		image_index = 2;
 		alarm[0] = -1;
+		
+		instance_create_depth(x,y-128,0,objButton);
 	}
 }
 
@@ -135,7 +137,7 @@ function init_mines(){
 	
 	all_mines[MINES.MINE_Basic] = {move_script: damage_player,args: [10], description: "10 DMG to player"}
 		
-	all_mines[MINES.MINE_Strong] = {move_script: damage_player,args: [25], description: "25 DMG to player"}
+	all_mines[MINES.MINE_Basic2] = {move_script: damage_player,args: [25], description: "25 DMG to player"}
 	
 	all_mines[MINES.MINE_Ice] = {move_script: damage_player,args: [15], description: "Freeze player"}
 	

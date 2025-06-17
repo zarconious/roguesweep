@@ -17,7 +17,7 @@ function create_particle(xx,yy, number, type = 0) {
 	}
 }
 
-function draw_hp(xx,yy,width,height,hp,maxhp,color = #F95738, show_max = true) {
+function draw_hp(xx,yy,width,height,hp,maxhp,color = make_color_rgb(237,80,80), show_max = true) {
 	
 	var _border = 4;
 	
